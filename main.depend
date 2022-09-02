@@ -1,0 +1,56 @@
+# depslib dependency file v1.0
+1661841048 source:c:\users\lenovo\desktop\demo\main\letter.c
+	<stdio.h>
+	<string.h>
+	<malloc.h>
+	"letter.h"
+	"pojo.h"
+
+1661840278 c:\users\lenovo\desktop\demo\main\letter.h
+	"pojo.h"
+
+1661874074 c:\users\lenovo\desktop\demo\main\pojo.h
+
+1661914395 source:c:\users\lenovo\desktop\demo\main\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<windows.h>
+	"pojo.h"
+	"letter.h"
+	"login.h"
+	"rsa.h"
+
+1498975518 source:c:\users\lenovo\desktop\demo\main\des.c
+	"stdio.h"
+	"memory.h"
+	"stdlib.h"
+	"des.h"
+
+1498975528 c:\users\lenovo\desktop\demo\main\des.h
+
+1499217262 source:c:\users\lenovo\desktop\demo\main\md5.c
+	"md5.h"
+
+1499219774 c:\users\lenovo\desktop\demo\main\md5.h
+	<stdint.h>
+	<string.h>
+
+1498981536 source:c:\users\lenovo\desktop\demo\main\rsa.c
+	"rsa.h"
+	<math.h>
+
+1661913438 c:\users\lenovo\desktop\demo\main\rsa.h
+
+1661914681 source:c:\users\lenovo\desktop\demo\main\login.c
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	"rsa.h"
+	"pojo.h"
+
+1661913862 c:\users\lenovo\desktop\demo\main\login.h
+
+1661913384 c:\users\lenovo\desktop\demo\main\main.h
+	"rsa.h"
+
