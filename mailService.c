@@ -151,6 +151,20 @@ int SendMailApi(char reciver[], char msg[], RsaPubKey pubKey)
 	//uid;msg;from;key
 
 	sprintf(addBuffer, "%s#%s#%s#%s#\n", reciver, keyMsg, logonUser.uid, keyMiBuffer);
+
+	//处理addBuffer 将\换成\\
+
+	for (int i = 0; i < strlen(addBuffer); i++)
+	{
+		//0123456789
+		if (addBuffer[i] == '\\')
+		{
+			for (int j = strlen(addBuffer); j > i; j--)
+				addBuffer[j] = addBuffer[j - 1];
+			i++;
+		}
+	}
+
 	mailFile = fopen(mailFilePath, "a+");
 	int add = fputs(addBuffer, mailFile);
 

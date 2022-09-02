@@ -132,6 +132,7 @@
     <ClCompile Include="loginService.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="md5.c" />
+    <ClCompile Include="noticeService.c" />
     <ClCompile Include="rsa.c" />
     <ClCompile Include="userService.c" />
     <ClCompile Include="utils.c" />
@@ -142,6 +143,7 @@
     <ClInclude Include="mailService.h" />
     <ClInclude Include="loginService.h" />
     <ClInclude Include="md5.h" />
+    <ClInclude Include="noticeService.h" />
     <ClInclude Include="pojo.h" />
     <ClInclude Include="rsa.h" />
     <ClInclude Include="userService.h" />

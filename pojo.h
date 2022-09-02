@@ -5,6 +5,9 @@
 #define KEYLENTH 32
 #define MSGLENTH 32
 #define FILEBUFFER 1024
+#define FILEPATH 128
+
+#define NOTICELENTH 256
 
 //下面的会被逐步代替
 
@@ -12,7 +15,6 @@
 #define MAXPATH 1024
 #define MAXFILEBUFFER 256
 #define MAXUSERID 128
-#define MAXPASS 128
 #define MAXMLENGTH 1024
 
 #define USER_ID_LENTH 16

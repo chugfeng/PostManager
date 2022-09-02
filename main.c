@@ -10,9 +10,13 @@
 #include "userService.h"
 #include "mailService.h"
 #include "loginService.h"
+#include "noticeService.h"
 
 RsaPubKey publicKey;
 RsaPriKey privateKey;
+
+int systemExit = 0;
+char end[1024] = "感谢使用本系统，请给五心好评哦~~~ ,下次再见！！\n\n\n";
 
 int e = 0, d = 0, T = 0;
 
@@ -23,16 +27,15 @@ void Regist();
 int GetMenue();
 void ReadMail();
 void SendMail();
+void PublishNotice();
 
 int main()
 {
-
-    //test();
-    //-1代表未登录
-    strcpy(logonUser.uid,"-1");
+    
     AppInit();
     while(1)
     {
+
         //判断用户是否登录
         if(!strcmp(logonUser.uid,"-1"))
             LoginAndResist();
@@ -41,11 +44,14 @@ int main()
 
         switch (menuIndex)
         {
-
+        case 0:
+            strcpy(logonUser.uid, "-1");break;
         case 1:
             SendMail(); break;
         case 2:
             ReadMail(); break;
+        case 3:
+            PublishNotice(); break;
         default:
             continue; break;
         }
@@ -54,11 +60,11 @@ int main()
 
 void AppInit()
 {
+    strcpy(logonUser.uid, "-1");
 	_getcwd(AppPath, MAXPATH);
-
-    if ((MailInitApi() && UserInitApi()) == 0)
+    if ((MailInitApi() && UserInitApi() && NoticeInitApi()) == 0)
     {
-        Sleep(1000);
+        Sleep(1500);
         exit(0);
     }
         
@@ -72,7 +78,6 @@ void LoginAndResist()
     {
         if (loginFlag == 1) break;
         system("cls");
-        fflush(stdin);
         printf("\n\n\n");
         printf("\t\t\t********************欢迎使用JC信箱**********************\n");
         printf("\n\n\n");
@@ -83,8 +88,9 @@ void LoginAndResist()
         printf("\t\t\t\t\t***   0-退出       ***\n");
         printf("\t\t\t\t\t**********************\n");
         printf("\n\n\n");
-        printf("请选择菜单：\n");
+        printf("请选择菜单：");
 
+        fflush(stdin);
         int result = scanf("%d",&index);
         if(result == 0)
         {
@@ -104,6 +110,7 @@ void LoginAndResist()
                 loginFlag = Login();
                 break;
             case 0:
+                printf("\n\n\t\t\t%s", end);
                 exit(0);
                 break;
             default:
@@ -115,6 +122,7 @@ void LoginAndResist()
     }
 }
 
+//获取菜单
 int GetMenue()
 {
     int index = 0;
@@ -149,14 +157,8 @@ int GetMenue()
             Sleep(2000);
             continue;
         }
-
-        if (index == 0)
-        {
-            strcpy(logonUser.uid, "-1");
-        }
         break;
     }
-
     return index;
 }
 
@@ -175,7 +177,7 @@ int Login()
         printf("请输入你的账号：");
         scanf("%s",uidBuffer);
 
-        char passBuffer[MAXPASS] = {0};
+        char passBuffer[FILEPATH] = {0};
         printf("请输入你的密码：");
         scanf("%s",passBuffer);
 
@@ -229,7 +231,7 @@ void Regist()
     printf("请输入你的账号（不大于8位）：");
     scanf("%s",uidBuffer);
 
-    char passBuffer[MAXPASS] = {0};
+    char passBuffer[FILEPATH] = {0};
     printf("请输入你的密码（不大于16位）：");
     scanf("%s",passBuffer);
 
@@ -425,7 +427,6 @@ void SendMail()
         printf("\n");
         printf("发送成功！咻~~~\n");
     }
-        
     else if (send == -1)
     {
         printf("\n");
@@ -531,4 +532,29 @@ void ReadMail()
     printf("\t%s\n", msg);
 
     system("pause");
+}
+
+//发布公告
+void PublishNotice()
+{
+    printf("请输入公告:\n");
+    char notice[NOTICELENTH] = { 0 };
+
+    //TODO这里需要改一下
+    scanf("%s", notice);
+
+    int send = SendNoticeApi(notice);
+
+    if (send == 1)
+    {
+        printf("\n");
+        printf("发布成功！\n");
+    }
+    else if (send == 0)
+    {
+        printf("\n");
+        printf("发布失败，请重试!\n");
+    }
+
+    Sleep(1000);
 }
