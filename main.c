@@ -24,31 +24,6 @@ int GetMenue();
 void ReadMail();
 void SendMail();
 
-
-
-//void test()
-//{
-//    AppInit();
-//    MailUserLink* a = (MailUserLink*)malloc(sizeof(MailUserLink));
-//    a->user.no = 0;
-//    
-//    GetMialUserList(a);
-//
-//    MailUserLink* p = a;
-//
-//    while (p != NULL)
-//    {
-//        if (p->user.no == 0)
-//        {
-//            p = p->next;
-//            continue;
-//        }
-//        printf("%s\n", p->user.uid);
-//        p = p->next;
-//    }
-//
-//}
-
 int main()
 {
 
@@ -388,7 +363,7 @@ void SendMail()
     else
     {
         printf("\n");
-        printf("抱歉 你没有该好友\n");
+        printf("抱歉 你没有好友\n");
         return;
     }
     
@@ -521,7 +496,7 @@ void ReadMail()
 
     //通过自己的私钥解开加密的DES密钥
     
-    long keyBuffer[8] = { 0 };
+    long keyBuffer[256] = { 0 };
     char keyTemp[8] = { 0 };
     index = 0;
     int ind = 0;
@@ -544,12 +519,12 @@ void ReadMail()
     }
 
     //解密密钥
-    char key[MAX_MSG_SIZE] = { 0 };
+    char key[KEYLENTH] = { 0 };
     RsaDecipher(keyBuffer, KEYLENTH, key, privateKey);
 
     //解密密文
     char msg[MSGLENTH] = { 0 };
-    DES_Decrypt(p->mail.msg, MSGLENTH, key, msg);
+    DES_Decrypt(p->mail.msg, strlen(p->mail.msg), key, msg);
 
     system("cls");
     printf("你收到一份来自%s的邮件，邮件内容如下:\n", p->mail.fromUId);

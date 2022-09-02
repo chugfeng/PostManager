@@ -5,6 +5,8 @@
 #include <time.h>
 #include <malloc.h>
 #include <stdlib.h>
+#include <windows.h>
+
 #include "mailService.h"
 #include "pojo.h"
 
@@ -49,7 +51,7 @@ void GetMailListApi(MailLink *mainList)
 		//recive;mag;from;key
 		//获取接收者
 		char reciveId[USER_ID_LENTH] = { 0 };
-		for (; mailBuffer[i] != ';'; i++)
+		for (; mailBuffer[i] != '#'; i++)
 			reciveId[i] = mailBuffer[i];
 
 		//判断是否属于登录者的
@@ -59,17 +61,17 @@ void GetMailListApi(MailLink *mainList)
 		//属于登录者的接下来获取消息，发送方，密钥.i++;
 		i++;
 		char msg[MAX_MSG_SIZE] = { 0 };
-		for (int j = 0 ; mailBuffer[i] != ';'; i++, j++)
+		for (int j = 0 ; mailBuffer[i] != '#'; i++, j++)
 			msg[j] = mailBuffer[i];
 
 		i++;
 		char fromId[USER_ID_LENTH] = { 0 };
-		for (int j = 0; mailBuffer[i] != ';'; i++, j++)
+		for (int j = 0; mailBuffer[i] != '#'; i++, j++)
 			fromId[j] = mailBuffer[i];
 
 		i++;
 		char fromKey[MAXMLENGTH] = { 0 };
-		for (int j = 0; mailBuffer[i] != ';'; i++, j++)
+		for (int j = 0; mailBuffer[i] != '#'; i++, j++)
 			fromKey[j] = mailBuffer[i];
 
 		MailLink* node = (MailLink*)malloc(sizeof(MailLink));
@@ -103,7 +105,8 @@ int SendMailApi(char reciver[], char msg[], RsaPubKey pubKey)
 
 		if (result == 0 || ques < 0 || ques >1)
 		{
-			printf("兄弟，我认识吴良材眼睛店的老板，报我的名打8折\n");
+			printf("请选择1或者0\n");
+			Sleep(1000);
 			continue;
 		}
 
@@ -113,13 +116,14 @@ int SendMailApi(char reciver[], char msg[], RsaPubKey pubKey)
 
 	int result = 0;
 	//第一步-生成des密钥key
-	//char key[KEYLENTH] = {0};
-	char key[KEYLENTH] = "aaaaaaa";
+	char key[KEYLENTH] = {0};
+	//char key[KEYLENTH] = "aaaaaaa";
 	GetRand8Char(key);
+
 	
 	//第二部-用des将消息加密
 	char keyMsg[MSGLENTH] = { 0 };
-	DES_Encrypt(msg, KEYLENTH, key, keyMsg);
+	DES_Encrypt(msg, strlen(msg), key, keyMsg);
 
 	//第三步-用收件人的公钥通过rsa算法将key加密
 	long keyDesKey[KEYLENTH] = { 0 };
@@ -129,24 +133,25 @@ int SendMailApi(char reciver[], char msg[], RsaPubKey pubKey)
 	char keyMiBuffer[1024] = { 0 };
 	char keyMiTemp[8] = { 0 };
 	
-	for (int i = 0; i < 8/*mikey[i] != 0*/; i++)
+	for (int i = 0; i < (sizeof(key) / sizeof(char)) /*mikey[i] != 0*/; i++)
 	{
+		//防止出现0
+		if (keyDesKey[i] == 0) break;
+
 		sprintf(keyMiTemp, "%d", keyDesKey[i]);
 
 		if (i == 0)
 			sprintf(keyMiBuffer, "%s", keyMiTemp);
 		else
-			sprintf(keyMiBuffer, "%s@%s", keyMiBuffer, keyMiTemp);
+			sprintf(keyMiBuffer, "%s%s%s", keyMiBuffer, "@", keyMiTemp);
 	}
 
 	//生成一个字符数组 将收件人id 加密后的消息 加密后的key 按照 uid;~key;~msg保存
-
-	mailFile = fopen(mailFilePath, "a+");
-
 	char addBuffer[FILEBUFFER] = { 0 };
 	//uid;msg;from;key
-	sprintf(addBuffer, "%s;%s;%s;%s;\n", reciver, keyMsg, logonUser.uid, keyMiBuffer);
 
+	sprintf(addBuffer, "%s#%s#%s#%s#\n", reciver, keyMsg, logonUser.uid, keyMiBuffer);
+	mailFile = fopen(mailFilePath, "a+");
 	int add = fputs(addBuffer, mailFile);
 
 	fclose(mailFile);
@@ -157,7 +162,7 @@ int SendMailApi(char reciver[], char msg[], RsaPubKey pubKey)
 		return 1;
 }
 
-//随机产生8个字符作为key
+//随机产生32个字符作为key
 void GetRand8Char(char *a)
 {
 	srand((unsigned)time(NULL)); //用时间做种，每次产生随机数不一样
@@ -165,7 +170,7 @@ void GetRand8Char(char *a)
 	while (index < KEYLENTH)
 	{
 		//随机产生 32位大写字符
-		char c = rand() % 35 + 65;
+		char c = rand() % 25 + 65;
 		a[index++] = c;
 	}
 }

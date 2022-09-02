@@ -156,8 +156,9 @@ void GetMialUserListApi(MailUserLink* userList)
 			for (int j = 0; pubKeyBuffer[i] != ';'; i++, j++)
 				cn[j] = pubKeyBuffer[i];
 
-			p->user.e = atoi(ce);
-			p->user.n = atoi(cn);
+			node->user.e = atoi(ce);
+			node->user.n = atoi(cn);
+			break;
 		}
 
 		fclose(pubKeyFile);

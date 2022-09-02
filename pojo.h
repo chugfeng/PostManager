@@ -1,15 +1,10 @@
 #pragma once
 
-#include <stdio.h>
-
 //从新写加解密,从新定义宏
 
 #define KEYLENTH 32
 #define MSGLENTH 32
 #define FILEBUFFER 1024
-
-//定义一个链接符
-#define symbol #
 
 //下面的会被逐步代替
 
@@ -38,7 +33,7 @@ typedef struct Mail
 	char fromUId[8];
 	char receiveUId[8];
 	char msg[MAX_MSG_SIZE];
-	char key[64];
+	char key[256];
 }Mail;
 
 //用来保存私信链表的结构体
