@@ -15,10 +15,7 @@
 RsaPubKey publicKey;
 RsaPriKey privateKey;
 
-int systemExit = 0;
 char end[1024] = "感谢使用本系统，请给五心好评哦~~~ ,下次再见！！\n\n\n";
-
-int e = 0, d = 0, T = 0;
 
 void AppInit();     //启动初始化
 void LoginAndResist();
@@ -28,6 +25,7 @@ int GetMenue();
 void ReadMail();
 void SendMail();
 void PublishNotice();
+int GetKey(int *e , int *d , int *T);
 
 int main()
 {
@@ -35,7 +33,6 @@ int main()
     AppInit();
     while(1)
     {
-
         //判断用户是否登录
         if(!strcmp(logonUser.uid,"-1"))
             LoginAndResist();
@@ -58,6 +55,7 @@ int main()
     }
 }
 
+//系统初始化
 void AppInit()
 {
     strcpy(logonUser.uid, "-1");
@@ -70,6 +68,7 @@ void AppInit()
         
 }
 
+//注册登录界面
 void LoginAndResist()
 {
     int index;
@@ -250,9 +249,9 @@ void Regist()
 	}
 
     //获取到随机密钥
-    
-    //GetKey(&e, &d, &T);
-    GetKey();
+    int e = 0, d = 0, T = 0;
+    GetKey(&e, &d, &T);
+    //GetKey();
     publicKey.e = e;
     publicKey.n = T;
     privateKey.d = d;
@@ -301,7 +300,7 @@ void Regist()
 }
 
 //获取密钥
-int GetKey()
+int GetKey(int* e, int* d, int* T)
 {
     int p, q, n, phi;
     srand(time(NULL));
@@ -327,7 +326,7 @@ int GetKey()
 
 
 
-    e = 173;d = 4037;T = 13971;
+    *e = 173; *d = 4037; *T = 13971;
     return 1;
 }
 
