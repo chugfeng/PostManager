@@ -8,6 +8,9 @@
 #define MSGLENTH 32
 #define FILEBUFFER 1024
 
+//定义一个链接符
+#define symbol #
+
 //下面的会被逐步代替
 
 #define MAX_MSG_SIZE 10240
