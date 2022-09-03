@@ -5,4 +5,4 @@
 int NoticeInitApi();
 
 //·¢ËÍ¹«¸æ
-int SendNoticeApi(char notice[]);
+int SendNoticeApi(char notice[], RsaPriKey privKey);

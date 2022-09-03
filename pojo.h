@@ -8,6 +8,8 @@
 #define FILEPATH 128
 
 #define NOTICELENTH 256
+#define USERIDLENTH 9
+#define TIMELENTH 24
 
 //下面的会被逐步代替
 
@@ -17,7 +19,6 @@
 #define MAXUSERID 128
 #define MAXMLENGTH 1024
 
-#define USER_ID_LENTH 16
 #define KEY_LENTH 8
 
 char AppPath[MAXPATH];
@@ -38,28 +39,43 @@ typedef struct Mail
 	char key[256];
 }Mail;
 
-//用来保存私信链表的结构体
+//用来保存私信链表
 typedef struct MailNode
 {
 	Mail mail;
 	struct MailNode *next;
 }MailLink;
 
-//发送邮件时展示联系人用的节点
+//联系人节点
 typedef struct MailUserNode
 {
 	int no;
 	char uid[8];
-
 	//联系人的公钥
 	int e;
 	int n;
 }MailUserNode;
 
-//联系人节点
+//联系人链表
 typedef struct MailUserLink
 {
 	MailUserNode user;
 	struct MailUserLink* next;
 }MailUserLink;
+
+//公告的节点
+typedef struct NoticeNode
+{
+	int no;
+	char uid[USERIDLENTH];
+	char notice[NOTICELENTH];
+	char publishTiem[TIMELENTH];
+}NoticeNode;
+
+//公告的链表
+typedef struct NoticeLink
+{
+	NoticeNode notice;
+	struct NoticeLink* next;
+}NoticeLink;
 

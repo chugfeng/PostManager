@@ -9,3 +9,6 @@ int UserInitApi();
 
 //通过指定的用户查询用户的私钥
 int GetPriveKeyByUserIdApi(char uid[], int* d, int* n);
+
+//
+void GetUserListApi(MailUserLink* userList);

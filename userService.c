@@ -84,7 +84,7 @@ int GetPriveKeyByUserIdApi(char uid[], int* d, int* n)
 }
 
 //获取所有的联系人 
-void GetMialUserListApi(MailUserLink* userList)
+void GetUserListApi(MailUserLink* userList)
 {
 	int no = 0;
 	char userPath[MAXPATH];

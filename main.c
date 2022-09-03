@@ -352,7 +352,7 @@ void SendMail()
     MailUserLink* userList = (MailUserLink*)malloc(sizeof(MailUserLink));
     //userList->user.no = 0;
     MailUserLink* p = userList;
-    GetMialUserListApi(userList);
+    GetUserListApi(userList);
     
     //展示联系人
     if (p->next != NULL)
@@ -536,13 +536,14 @@ void ReadMail()
 //发布公告
 void PublishNotice()
 {
+    system("cls");
     printf("请输入公告:\n");
     char notice[NOTICELENTH] = { 0 };
 
     //TODO这里需要改一下
     scanf("%s", notice);
 
-    int send = SendNoticeApi(notice);
+    int send = SendNoticeApi(notice, privateKey);
 
     if (send == 1)
     {

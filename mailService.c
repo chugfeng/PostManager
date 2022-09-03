@@ -50,7 +50,7 @@ void GetMailListApi(MailLink *mainList)
 		int i = 0;
 		//recive;mag;from;key
 		//获取接收者
-		char reciveId[USER_ID_LENTH] = { 0 };
+		char reciveId[USERIDLENTH] = { 0 };
 		for (; mailBuffer[i] != '#'; i++)
 			reciveId[i] = mailBuffer[i];
 
@@ -65,7 +65,7 @@ void GetMailListApi(MailLink *mainList)
 			msg[j] = mailBuffer[i];
 
 		i++;
-		char fromId[USER_ID_LENTH] = { 0 };
+		char fromId[USERIDLENTH] = { 0 };
 		for (int j = 0; mailBuffer[i] != '#'; i++, j++)
 			fromId[j] = mailBuffer[i];
 
@@ -146,7 +146,7 @@ int SendMailApi(char reciver[], char msg[], RsaPubKey pubKey)
 			sprintf(keyMiBuffer, "%s%s%s", keyMiBuffer, "@", keyMiTemp);
 	}
 
-	//生成一个字符数组 将收件人id 加密后的消息 加密后的key 按照 uid;~key;~msg保存
+	//生成一个字符数组 将收件人id 加密后的消息 加密后的key 按照 uid#key#fromid#msg保存
 	char addBuffer[FILEBUFFER] = { 0 };
 	//uid;msg;from;key
 
