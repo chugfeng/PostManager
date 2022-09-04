@@ -66,6 +66,7 @@ typedef struct NoticeNode
 	char notice[NOTICELENTH];
 	char publishTiem[TIMELENTH];
 	char keyMd5[33];
+	char MD5[33];
 }NoticeNode;
 
 //公告的链表

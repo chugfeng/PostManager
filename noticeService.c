@@ -39,15 +39,13 @@ int SendNoticeApi(char notice[], RsaPriKey privKey)
 	unsigned char MD5[33] = { 0 };
 	md5(notice, strlen(notice), MD5);
 
-	printf("公告摘要 -> %s", MD5);
-
 	//将摘要加密
 	unsigned char keyMd5[64] = { 0 };
 	RsaDecipher(MD5, strlen(MD5), keyMd5, privKey);
 
 	//组成 buffer 写入文件
 	char addBuffer[FILEBUFFER] = { 0 };
-	sprintf(addBuffer, "%s#%s#%s#%s#\n", logonUser.uid, sendTime, notice, keyMd5);
+	sprintf(addBuffer, "%s#%s#%s#%s#%s#\n", logonUser.uid, sendTime, notice, MD5, keyMd5);
 
 	//处理addBuffer 将\换成\\
 
@@ -68,6 +66,8 @@ int SendNoticeApi(char notice[], RsaPriKey privKey)
 
 	fclose(noticeFile);
 
+	printf("已为公告生成摘要->:%s\n", MD5);
+
 	if (add == EOF)
 		return 0;
 	else
@@ -85,7 +85,7 @@ int GetNoticeListApi(NoticeLink* head)
 	{
 		int i = 0;
 		//去除空行
-		if (noticeBuffer[0] == '\0') continue;
+		if (noticeBuffer[0] == '\n') continue;
 
 		char uid[USERIDLENTH] = { 0 };
 		for (; noticeBuffer[i] != '#'; i++)
@@ -102,20 +102,32 @@ int GetNoticeListApi(NoticeLink* head)
 			notice[j] = noticeBuffer[i];
 
 		i++;
+		char MD5[NOTICELENTH] = { 0 };
+		for (int j = 0; noticeBuffer[i] != '#'; i++, j++)
+			MD5[j] = noticeBuffer[i];
+
+		i++;
 		char keyMd5[NOTICELENTH] = { 0 };
 		for (int j = 0; noticeBuffer[i] != '#'; i++, j++)
+		{
+			if (noticeBuffer[i] == '\n') break;
 			keyMd5[j] = noticeBuffer[i];
+		}
+			
 
 		NoticeLink* node = (NoticeLink*)malloc(sizeof(NoticeLink));
 
 		node->notice.no = ++no;
+		node->next = NULL;
 		strcpy(node->notice.uid, uid);
 		strcpy(node->notice.publishTiem, sendTime);
 		strcpy(node->notice.notice, notice);
 		strcpy(node->notice.keyMd5, keyMd5);
+		strcpy(node->notice.MD5, MD5);
 
 		p->next = node;
 		p = p->next;
 	}
 	fclose(noticeFile);
+	return 1;
 }

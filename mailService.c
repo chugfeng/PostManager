@@ -11,7 +11,7 @@
 #include "pojo.h"
 
 
-char mailFilePath[MAXPATH];
+char mailFilePath[FILEPATH];
 FILE* mailFile = NULL;
 
 
@@ -36,14 +36,14 @@ void GetMailListApi(MailLink *mainList)
 {
 	int no = 0;
 	MailLink *p = mainList;
-	char mailBuffer[MAXFILEBUFFER];
+	char mailBuffer[FILEBUFFER];
 	mailFile = fopen(mailFilePath, "r");
 
 	//读取登录者的文件
 	while (1)
 	{
 		mailBuffer[0] = '\0';
-		if (fgets(mailBuffer, MAXFILEBUFFER, mailFile) == NULL) break;
+		if (fgets(mailBuffer, FILEBUFFER, mailFile) == NULL) break;
 
 		if (mailBuffer[0] == '\n') continue;
 

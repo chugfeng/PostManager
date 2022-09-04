@@ -4,13 +4,13 @@
 #include "userService.h"
 
 
-char userFilePath[MAXPATH];
+char userFilePath[FILEBUFFER];
 FILE* userFile = NULL;
 
-char privKeyFilePath[MAXPATH];
+char privKeyFilePath[FILEBUFFER];
 FILE* privKeyFile = NULL;
 
-char publKeyFilePath[MAXPATH];
+char publKeyFilePath[FILEBUFFER];
 FILE* publKeyFile = NULL;
 
 int UserInitApi()
@@ -48,10 +48,10 @@ int UserInitApi()
 //查私钥
 int GetPriveKeyByUserIdApi(char uid[], int* d, int* n)
 {
-	char privKeyBuffer[MAXFILEBUFFER];
+	char privKeyBuffer[FILEBUFFER];
 	privKeyFile = fopen(privKeyFilePath, "r");
 
-	while (fgets(privKeyBuffer, MAXFILEBUFFER, privKeyFile) != NULL)
+	while (fgets(privKeyBuffer, FILEBUFFER, privKeyFile) != NULL)
 	{
 		if (privKeyBuffer[0] == '\n') continue;
 
@@ -64,7 +64,7 @@ int GetPriveKeyByUserIdApi(char uid[], int* d, int* n)
 		if (strcmp(uid, logonUser.uid))
 			continue;
 
-		//获取e
+		//获取d
 		char cd[8] = { 0 };
 		char cn[8] = { 0 };
 
@@ -83,12 +83,51 @@ int GetPriveKeyByUserIdApi(char uid[], int* d, int* n)
 	return 0;
 }
 
+//查公钥
+int GetPublicKeyByUserIdApi(char uid[], int* e, int* n)
+{
+	char publicKeyBuffer[FILEBUFFER];
+	publKeyFile = fopen(publKeyFilePath, "r");
+
+	while (fgets(publicKeyBuffer, FILEBUFFER, publKeyFile) != NULL)
+	{
+		if (publicKeyBuffer[0] == '\n') continue;
+
+		int i = 0;
+		char id[9] = { 0 };
+
+		for (; publicKeyBuffer[i] != ';'; i++)
+			id[i] = publicKeyBuffer[i];
+
+		if (strcmp(id, uid))
+			continue;
+
+		//获取e
+		char ce[8] = { 0 };
+		char cn[8] = { 0 };
+
+		i++;
+		for (int j = 0; publicKeyBuffer[i] != ';'; i++, j++)
+			ce[j] = publicKeyBuffer[i];
+
+		i++;
+		for (int j = 0; publicKeyBuffer[i] != ';'; i++, j++)
+			cn[j] = publicKeyBuffer[i];
+		*e = atoi(ce);
+		*n = atoi(cn);
+
+		return 1;
+	}
+	return 0;
+}
+
+
 //获取所有的联系人 
 void GetUserListApi(MailUserLink* userList)
 {
 	int no = 0;
-	char userPath[MAXPATH];
-	char userBuffer[MAXFILEBUFFER];
+	char userPath[FILEPATH];
+	char userBuffer[FILEBUFFER];
 
 	MailUserLink* p = userList;
 
@@ -103,7 +142,7 @@ void GetUserListApi(MailUserLink* userList)
 	}
 
 
-	while (fgets(userBuffer, MAXFILEBUFFER, userFile) != NULL)
+	while (fgets(userBuffer, FILEBUFFER, userFile) != NULL)
 	{
 
 		//排除空行情况
@@ -124,8 +163,8 @@ void GetUserListApi(MailUserLink* userList)
 		//get the user plubic Key
 		char ce[8] = { 0 };
 		char cn[8] = { 0 };
-		char pubKeyBuffer[MAXFILEBUFFER];
-		char pubFilePath[MAXPATH];
+		char pubKeyBuffer[FILEBUFFER];
+		char pubFilePath[FILEPATH];
 		sprintf(pubFilePath, "%s\\data\\publickey.txt", AppPath);
 		FILE* pubKeyFile = fopen(pubFilePath, "r");
 
@@ -135,7 +174,7 @@ void GetUserListApi(MailUserLink* userList)
 			return;
 		}
 
-		while (fgets(pubKeyBuffer, MAXFILEBUFFER, pubKeyFile) != NULL)
+		while (fgets(pubKeyBuffer, FILEBUFFER, pubKeyFile) != NULL)
 		{
 			char pubKeyUserId[12] = { 0 };
 			//排除空行情况

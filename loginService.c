@@ -28,11 +28,11 @@ int GetKey(int* e, int* d, int* T)
 
     phi = (p - 1) * (+-q - 1);
 
-    e = randExponent(phi, EXPONENT_MAX);
+    *e = randExponent(phi, EXPONENT_MAX);
 
-    d = inverse(e, phi);
+    *d = inverse(e, phi);
 
-    T = n;
+    *T = n;
 
 
 
@@ -178,7 +178,6 @@ int RegistApi(char nid[], char npass[],int *xe,int *xd,int *xn)
     int e = 0, d = 0, T = 0;
     GetKey(&e, &d, &T);
 
-    //把公钥保存到文件中TODO 复制不安全
     memcpy(uid, nid, 8);
     //strcpy(uid, nid);
     char pubKeyPath[FILEPATH] = { 0 };
@@ -221,6 +220,27 @@ int RegistApi(char nid[], char npass[],int *xe,int *xd,int *xn)
         return 1;
     else
         return 0;
+}
+
+int CheckUidApi(char id[])
+{
+    char userpath[FILEPATH];
+    sprintf(userpath, "%s\\data\\user.txt", AppPath);
+    FILE* file = fopen(userpath, "a+");
+
+    char buffer[FILEBUFFER] = { 0 };
+    while (fgets(buffer, FILEBUFFER, file) != NULL)
+    {
+        char uid[9] = { 0 };
+
+        if (buffer[0] == '\n') continue;
+
+        for (int i = 0; buffer[i] != ';'; i++)
+            uid[i] = buffer[i];
+
+        if (!strcmp(uid, id)) return 1;
+    }
+    return 0;
 }
 
 

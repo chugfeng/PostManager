@@ -11,6 +11,7 @@
 #include "mailService.h"
 #include "loginService.h"
 #include "noticeService.h"
+#include "MD5_.h"
 
 RsaPubKey publicKey;
 RsaPriKey privateKey;
@@ -26,11 +27,9 @@ void ReadMail();
 void SendMail();
 void PublishNotice();
 void ReadNotice();
-//int GetKey(int *e , int *d , int *T);
 
 int main()
 {
-    
     AppInit();
     while(1)
     {
@@ -153,7 +152,7 @@ int GetMenue()
             Sleep(2000);
             continue;
         }
-        if (index < 0 || index > 3)
+        if (index < 0 || index > 5)
         {
             printf("输入错误！请输入菜单中的选项\n");
             Sleep(2000);
@@ -172,16 +171,20 @@ int Login()
     while(1)
     {
         system("cls");
-        char  uidBuffer[MAXUSERID] = {0};
+        char  uidBuffer[128] = {0};
         printf("\n\n\n");
         printf("\t\t\t********************欢迎登录JC信箱**********************\n");
         printf("\n\n\n");
-        printf("请输入你的账号：");
+        printf("请输入你的账号(输入esc退出)：");
         scanf("%s",uidBuffer);
 
-        char passBuffer[FILEPATH] = {0};
-        printf("请输入你的密码：");
+        if (!strcmp(uidBuffer, "esc")) return;
+
+        char passBuffer[128] = {0};
+        printf("请输入你的密码(输入esc退出)：");
         scanf("%s",passBuffer);
+
+        if (!strcmp(passBuffer, "esc")) return;
 
         int e,n;
 
@@ -218,152 +221,108 @@ int Login()
             Sleep(2000);
         }
     }
-
     return ret;
 }
 
 //注册
-//void Regist()
-//{
-//    system("cls");
-//    char  uidBuffer[MAXUSERID] = {0};
-//    printf("\n\n\n");
-//    printf("\t\t\t********************欢迎注册JC信箱**********************\n");
-//    printf("\n\n\n");
-//    printf("请输入你的账号（不大于8位）：");
-//    scanf("%s",uidBuffer);
-//
-//    char passBuffer[FILEPATH] = {0};
-//    printf("请输入你的密码（不大于16位）：");
-//    scanf("%s",passBuffer);
-//
-//    char uid[USERIDLENTH] = {0};
-//    char pass[17] = {0};
-//
-//    //获取到user文件的路径
-//    char userpath[FILEPATH];
-//    sprintf(userpath, "%s\\data\\user.txt", AppPath);
-//
-//    FILE *file = fopen(userpath, "a+");
-//    if (file == NULL)
-//	{
-//		printf("%s 文件不存在，请检查\n", userpath);
-//		Sleep(3000);
-//	}
-//
-//    //获取到随机密钥
-//    int e = 0, d = 0, T = 0;
-//    GetKey(&e, &d, &T);
-//    //GetKey();
-//    publicKey.e = e;
-//    publicKey.n = T;
-//    privateKey.d = d;
-//    privateKey.n = T;
-//
-//    //把公钥保存到文件中TODO 复制不安全
-//    strcpy(uid,uidBuffer);
-//    char pubKeyPath [FILEPATH] = {0};
-//    sprintf(pubKeyPath,"%s\\data\\publickey.txt",AppPath);
-//
-//    FILE *pkFile = fopen(pubKeyPath,"a+");
-//
-//    char pkBuffer[1024] = {0};
-//    sprintf(pkBuffer,"%s;%d;%d;\n",uid,e,T);
-//    fputs(pkBuffer,pkFile);
-//    fclose(pkFile);
-//
-//    //把私钥保存到文件中
-//
-//    char priKeyPath [FILEPATH] = {0};
-//    sprintf(priKeyPath,"%s\\data\\privatekey.txt",AppPath);
-//
-//    FILE *pvFile = fopen(priKeyPath,"a+");
-//
-//    char pvBuffer[1024] = {0};
-//    sprintf(pvBuffer,"%s;%d;%d;\n",uid,d,T);
-//    fputs(pvBuffer,pvFile);
-//    fclose(pvFile);
-//
-//    strcpy(uid,uidBuffer);
-//    strcpy(pass, passBuffer);
-//
-//
-//    char _buffer[48] = {0};
-//    sprintf(_buffer, "%s;%s;\n", uid,pass);
-//
-//    //将账号密码保存起来
-//    int result  = fputs(_buffer,file);
-//    if(result == 0)
-//        printf("注册成功!  \n账号密码为%s",_buffer);
-//    else
-//        printf("注册失败！\n");
-//
-//    Sleep(3000);
-//    fclose(file);
-//}
-
 void Regist()
 {
     system("cls");
     char  uidBuffer[128] = { 0 };
+    char passBuffer[128] = { 0 };
     printf("\n\n\n");
     printf("\t\t\t********************欢迎注册JC信箱**********************\n");
     printf("\n\n\n");
-    printf("请输入你的账号（不大于8位）：");
-    scanf("%s", uidBuffer);
 
-    char passBuffer[128] = { 0 };
-    printf("请输入你的密码（不大于16位）：");
-    scanf("%s", passBuffer);
+    while (1)
+    {
+        fflush(stdin);
+        printf("\n请输入你的账号（不大于8位）(输入esc取消注册)：");
+        scanf("%s", uidBuffer);
+
+        if (!strcmp(uidBuffer, "esc")) return;
+
+        if (strlen(uidBuffer) > 8)
+        {
+            printf("\t你输入的ID超过8位，请重新输入\n");
+            Sleep(2000);
+            continue;
+        }
+
+        if (CheckUidApi(uidBuffer))
+        {
+            printf("\t你输入的ID已被注册，请重新输入\n");
+            Sleep(2000);
+            continue;
+        }
+        break;
+    }
+    
+    while (1)
+    {
+        fflush(stdin);
+        printf("\n请输入你的密码（不大于16位）(输入esc取消注册)：");
+        scanf("%s", passBuffer);
+
+        if (!strcmp(passBuffer, "esc")) return;
+
+        if (strlen(uidBuffer) > 16)
+        {
+            printf("\t你输入的密码超过16位，请重新输入\n");
+            Sleep(2000);
+            continue;
+        }
+        break;
+    }
 
     int e = 0, d = 0, T = 0;
     int resule = RegistApi(uidBuffer, passBuffer, &e, &d, &T);
     
-    if (resule == 0)
+    if (resule == 1)
     {
         publicKey.e = e;
         publicKey.n = T;
         privateKey.d = d;
         privateKey.n = T;
-        printf("注册成功!  \n");
+        printf("\t\t注册成功!  \n");
     }
         
     else
-        printf("注册失败！\n");
+        printf("\t\t注册失败！\n");
 
     Sleep(2000);
 }
 
 //获取密钥
-int GetKey(int* e, int* d, int* T)
-{
-    int p, q, n, phi;
-    srand(time(NULL));
-    while (1) {
-        p = randPrime(SINGLE_MAX);
-
-        q = randPrime(SINGLE_MAX);
-
-        n = p * q;
-
-        if (n >= 128)
-            break;
-    }
-
-    phi = (p - 1) * (+-q - 1);
-
-    e = randExponent(phi, EXPONENT_MAX);
-
-    d = inverse(e, phi);
-
-    T = n;
-
-
-
-
-    *e = 173; *d = 4037; *T = 13971;
-    return 1;
-}
+//int GetKey(int* e, int* d, int* T)
+//{
+//    int p, q, n, phi;
+//    srand(time(NULL));
+//    while (1) {
+//        p = randPrime(SINGLE_MAX);
+//
+//        q = randPrime(SINGLE_MAX);
+//
+//        n = p * q;
+//
+//        if (n >= 128)
+//            break;
+//    }
+//
+//    phi = (p - 1) * (+-q - 1);
+//
+//    e = randExponent(phi, EXPONENT_MAX);
+//
+//    d = inverse(e, phi);
+//
+//    T = n;
+//
+//
+//
+//
+//    *e = 173; *d = 4037; *T = 13971;
+//    return 1;
+//}
 
 //发送私信
 void SendMail()
@@ -381,7 +340,7 @@ void SendMail()
     printf("\n");
     fflush(stdin);
     //gets_s(sendMsgBuffer, 1024);
-    //strcpy(sendMsgBuffer, "aabccdd");
+    //TODO这里需要改一下
     scanf("%s", sendMsgBuffer);
 
     MailUserLink* userList = (MailUserLink*)malloc(sizeof(MailUserLink));
@@ -508,7 +467,7 @@ void ReadMail()
         printf("请输入你想查看的私信序号:");
         int result = scanf("%d", &index);
 
-        if (result == EOF || result == 0 || result <0 || result > mailNum)
+        if (result == EOF || result == 0 || result <0 || index > mailNum)
         {
             printf("嘿老朋友，你要是再这样，小心我揍你的屁股");
             Sleep(3000);
@@ -576,6 +535,7 @@ void PublishNotice()
     char notice[NOTICELENTH] = { 0 };
 
     //TODO这里需要改一下
+    //gets(notice, NOTICELENTH);
     scanf("%s", notice);
 
     int send = SendNoticeApi(notice, privateKey);
@@ -609,10 +569,78 @@ void ReadNotice()
     }
 
     NoticeLink* p = head->next;
-    printf("序号\t\t发布者ID\t\t发布时间\n");
+    printf("序号\t\t发布者ID\t\t发布时间\t\t摘要\n");
 
+    int noticeNum = 0;
     while (p != NULL)
     {
+        noticeNum++;
+        printf("%d\t\t%s\t\t%s\t\t%s\n", p->notice.no, p->notice.uid, p->notice.publishTiem,p->notice.MD5);
+        p = p->next;
+    }
 
+    while (1)
+    {
+        printf("\n\n");
+        printf("请选择你要查看的公告，并校验公告！(-1退出)\n请输入序号->:");
+        int index = 0;
+
+        while (1)
+        {
+            int result = scanf("%d", &index);
+
+            if (result == EOF || result == 0 || result <0 || index > noticeNum)
+            {
+                printf("嘿老朋友，你要是再这样，小心我揍你的屁股");
+                Sleep(3000);
+            }
+            break;
+        }
+
+        if (index == -1) break;
+
+        p = head->next;
+
+        while (1)
+        {
+            if (p->notice.no == index)
+                break;
+            p = p->next;
+        }
+
+        char MD5[33] = { 0 };
+        md5(p->notice.notice, strlen(p->notice.notice), MD5);
+
+        int e, n;
+        int ret = GetPublicKeyByUserIdApi(p->notice.uid, &e, &n);
+
+        if (ret == 0)
+        {
+            printf("未获取到指定用户的公钥，校验失败\n");
+            Sleep(2000);
+            return;
+        }
+
+        RsaPubKey pukey;
+        pukey.e = e;
+        pukey.n = n;
+
+        char deKeyMd5[65] = { 0 };
+        RsaEncipher(p->notice.keyMd5, strlen(p->notice.keyMd5), deKeyMd5, pukey);
+
+        if (strcmp(MD5, p->notice.MD5))
+        {
+            printf("校验失败，无法查看公告\n");
+            Sleep(2000);
+            return;
+        }
+
+        system("cls");
+        printf("发布人ID：%s\n\n", p->notice.uid);
+        printf("发布时间：%s\n\n", p->notice.publishTiem);
+
+        printf("发布内容：%s\n\n", p->notice.notice);
+
+        system("pause");
     }
 }

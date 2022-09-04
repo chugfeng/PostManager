@@ -20,6 +20,9 @@
  * \param rn 登录成功后获取的公钥的n
  * \return 1登录成功 0登录失败
  */
+
+int GetKey(int* e, int* d, int* T);
+
 int LoginApi(char id[],char pass[],int *re,int *rn);
 
 int RegistApi(char nid[], char npass[], int* xe, int* xd, int* xn);
