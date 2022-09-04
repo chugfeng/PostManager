@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "md5.h"
 #include "MD5_.h"
 #include "pojo.h"
@@ -66,7 +64,9 @@ int SendNoticeApi(char notice[], RsaPriKey privKey)
 
 	fclose(noticeFile);
 
-	printf("已为公告生成摘要->:%s\n", MD5);
+	printf("\n\t已为公告生成摘要->:%s\n", MD5);
+
+	system("pause");
 
 	if (add == EOF)
 		return 0;

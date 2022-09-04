@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <time.h>
-#include <stdio.h>
+#include <stdlib.h>
 
 int NoticeInitApi();
 
