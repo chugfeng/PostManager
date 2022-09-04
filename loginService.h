@@ -22,7 +22,7 @@
  */
 int LoginApi(char id[],char pass[],int *re,int *rn);
 
-int RegistApi(char id[], char pass[]);
+int RegistApi(char nid[], char npass[], int* xe, int* xd, int* xn);
 
 //ÅÐ¶ÏÊÇ·ñ×¢²á¹ý
 int CheckUidApi(char id[]);

@@ -166,7 +166,7 @@ static int converte (WORD32 *x, const char *pt, int num, int old_status) {
   return new_status;
 }
 
-void md5 (const char *message, long len, char *output) {
+void md5_ (const char *message, long len, char *output) {
   WORD32 d[4];
   int status = 0;
   long i = 0;

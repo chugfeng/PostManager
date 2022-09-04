@@ -25,7 +25,8 @@ int GetMenue();
 void ReadMail();
 void SendMail();
 void PublishNotice();
-int GetKey(int *e , int *d , int *T);
+void ReadNotice();
+//int GetKey(int *e , int *d , int *T);
 
 int main()
 {
@@ -49,6 +50,8 @@ int main()
             ReadMail(); break;
         case 3:
             PublishNotice(); break;
+        case 4:
+            ReadNotice(); break;
         default:
             continue; break;
         }
@@ -59,7 +62,7 @@ int main()
 void AppInit()
 {
     strcpy(logonUser.uid, "-1");
-	_getcwd(AppPath, MAXPATH);
+	_getcwd(AppPath, FILEPATH);
     if ((MailInitApi() && UserInitApi() && NoticeInitApi()) == 0)
     {
         Sleep(1500);
@@ -220,83 +223,115 @@ int Login()
 }
 
 //注册
+//void Regist()
+//{
+//    system("cls");
+//    char  uidBuffer[MAXUSERID] = {0};
+//    printf("\n\n\n");
+//    printf("\t\t\t********************欢迎注册JC信箱**********************\n");
+//    printf("\n\n\n");
+//    printf("请输入你的账号（不大于8位）：");
+//    scanf("%s",uidBuffer);
+//
+//    char passBuffer[FILEPATH] = {0};
+//    printf("请输入你的密码（不大于16位）：");
+//    scanf("%s",passBuffer);
+//
+//    char uid[USERIDLENTH] = {0};
+//    char pass[17] = {0};
+//
+//    //获取到user文件的路径
+//    char userpath[FILEPATH];
+//    sprintf(userpath, "%s\\data\\user.txt", AppPath);
+//
+//    FILE *file = fopen(userpath, "a+");
+//    if (file == NULL)
+//	{
+//		printf("%s 文件不存在，请检查\n", userpath);
+//		Sleep(3000);
+//	}
+//
+//    //获取到随机密钥
+//    int e = 0, d = 0, T = 0;
+//    GetKey(&e, &d, &T);
+//    //GetKey();
+//    publicKey.e = e;
+//    publicKey.n = T;
+//    privateKey.d = d;
+//    privateKey.n = T;
+//
+//    //把公钥保存到文件中TODO 复制不安全
+//    strcpy(uid,uidBuffer);
+//    char pubKeyPath [FILEPATH] = {0};
+//    sprintf(pubKeyPath,"%s\\data\\publickey.txt",AppPath);
+//
+//    FILE *pkFile = fopen(pubKeyPath,"a+");
+//
+//    char pkBuffer[1024] = {0};
+//    sprintf(pkBuffer,"%s;%d;%d;\n",uid,e,T);
+//    fputs(pkBuffer,pkFile);
+//    fclose(pkFile);
+//
+//    //把私钥保存到文件中
+//
+//    char priKeyPath [FILEPATH] = {0};
+//    sprintf(priKeyPath,"%s\\data\\privatekey.txt",AppPath);
+//
+//    FILE *pvFile = fopen(priKeyPath,"a+");
+//
+//    char pvBuffer[1024] = {0};
+//    sprintf(pvBuffer,"%s;%d;%d;\n",uid,d,T);
+//    fputs(pvBuffer,pvFile);
+//    fclose(pvFile);
+//
+//    strcpy(uid,uidBuffer);
+//    strcpy(pass, passBuffer);
+//
+//
+//    char _buffer[48] = {0};
+//    sprintf(_buffer, "%s;%s;\n", uid,pass);
+//
+//    //将账号密码保存起来
+//    int result  = fputs(_buffer,file);
+//    if(result == 0)
+//        printf("注册成功!  \n账号密码为%s",_buffer);
+//    else
+//        printf("注册失败！\n");
+//
+//    Sleep(3000);
+//    fclose(file);
+//}
+
 void Regist()
 {
     system("cls");
-    char  uidBuffer[MAXUSERID] = {0};
+    char  uidBuffer[128] = { 0 };
     printf("\n\n\n");
     printf("\t\t\t********************欢迎注册JC信箱**********************\n");
     printf("\n\n\n");
     printf("请输入你的账号（不大于8位）：");
-    scanf("%s",uidBuffer);
+    scanf("%s", uidBuffer);
 
-    char passBuffer[FILEPATH] = {0};
+    char passBuffer[128] = { 0 };
     printf("请输入你的密码（不大于16位）：");
-    scanf("%s",passBuffer);
+    scanf("%s", passBuffer);
 
-    char uid[8] = {0};
-    char pass[16] = {0};
-
-    //获取到user文件的路径
-    char userpath[MAXPATH];
-    sprintf(userpath, "%s\\data\\user.txt", AppPath);
-
-    FILE *file = fopen(userpath, "a+");
-    if (file == NULL)
-	{
-		printf("%s 文件不存在，请检查\n", userpath);
-		Sleep(3000);
-	}
-
-    //获取到随机密钥
     int e = 0, d = 0, T = 0;
-    GetKey(&e, &d, &T);
-    //GetKey();
-    publicKey.e = e;
-    publicKey.n = T;
-    privateKey.d = d;
-    privateKey.n = T;
-
-    //把公钥保存到文件中
-    strcpy(uid,uidBuffer);
-    char pubKeyPath [MAXPATH] = {0};
-    sprintf(pubKeyPath,"%s\\data\\publickey.txt",AppPath);
-
-    FILE *pkFile = fopen(pubKeyPath,"a+");
-
-    char pkBuffer[1024] = {0};
-    sprintf(pkBuffer,"%s;%d;%d;\n",uid,e,T);
-    fputs(pkBuffer,pkFile);
-    fclose(pkFile);
-
-    //把私钥保存到文件中
-
-    char priKeyPath [MAXPATH] = {0};
-    sprintf(priKeyPath,"%s\\data\\privatekey.txt",AppPath);
-
-    FILE *pvFile = fopen(priKeyPath,"a+");
-
-    char pvBuffer[1024] = {0};
-    sprintf(pvBuffer,"%s;%d;%d;\n",uid,d,T);
-    fputs(pvBuffer,pvFile);
-    fclose(pvFile);
-
-    strcpy(uid,uidBuffer);
-    strcpy(pass, passBuffer);
-
-
-    char _buffer[48] = {0};
-    sprintf(_buffer, "%s;%s;\n", uid,pass);
-
-    //将账号密码保存起来
-    int result  = fputs(_buffer,file);
-    if(result == 0)
-        printf("注册成功!  \n账号密码为%s",_buffer);
+    int resule = RegistApi(uidBuffer, passBuffer, &e, &d, &T);
+    
+    if (resule == 0)
+    {
+        publicKey.e = e;
+        publicKey.n = T;
+        privateKey.d = d;
+        privateKey.n = T;
+        printf("注册成功!  \n");
+    }
+        
     else
         printf("注册失败！\n");
 
-    Sleep(3000);
-    fclose(file);
+    Sleep(2000);
 }
 
 //获取密钥
@@ -557,4 +592,27 @@ void PublishNotice()
     }
 
     Sleep(1000);
+}
+
+//查看公告
+void ReadNotice()
+{
+    NoticeLink* head = (NoticeLink*)malloc(sizeof(NoticeLink));
+    head->next = NULL;
+    GetNoticeListApi(head);
+
+    if (head->next == NULL)
+    {
+        printf("暂时没有公告！！");
+        Sleep(2000);
+        return;
+    }
+
+    NoticeLink* p = head->next;
+    printf("序号\t\t发布者ID\t\t发布时间\n");
+
+    while (p != NULL)
+    {
+
+    }
 }

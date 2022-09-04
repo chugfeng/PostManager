@@ -14,14 +14,9 @@
 //下面的会被逐步代替
 
 #define MAX_MSG_SIZE 10240
-#define MAXPATH 1024
-#define MAXFILEBUFFER 256
-#define MAXUSERID 128
 #define MAXMLENGTH 1024
 
-#define KEY_LENTH 8
-
-char AppPath[MAXPATH];
+char AppPath[FILEPATH];
 
 //登录者的信息
 struct logon
@@ -70,6 +65,7 @@ typedef struct NoticeNode
 	char uid[USERIDLENTH];
 	char notice[NOTICELENTH];
 	char publishTiem[TIMELENTH];
+	char keyMd5[33];
 }NoticeNode;
 
 //公告的链表

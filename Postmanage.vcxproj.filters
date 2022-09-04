@@ -45,6 +45,9 @@
     <ClCompile Include="noticeService.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MD5_.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="des.h">
@@ -72,6 +75,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="noticeService.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MD5_.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

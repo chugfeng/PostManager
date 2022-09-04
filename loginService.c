@@ -6,10 +6,40 @@
 
 #include "loginService.h"
 #include "userService.h"
-
+#include "utils.h"
 
 
 RsaPriKey pkey;
+
+int GetKey(int* e, int* d, int* T)
+{
+    int p, q, n, phi;
+    srand(time(NULL));
+    while (1) {
+        p = randPrime(SINGLE_MAX);
+
+        q = randPrime(SINGLE_MAX);
+
+        n = p * q;
+
+        if (n >= 128)
+            break;
+    }
+
+    phi = (p - 1) * (+-q - 1);
+
+    e = randExponent(phi, EXPONENT_MAX);
+
+    d = inverse(e, phi);
+
+    T = n;
+
+
+
+
+    *e = 173; *d = 4037; *T = 13971;
+    return 1;
+}
 
 /**
  * 登录的API.
@@ -23,8 +53,8 @@ int LoginApi(char id[],char pass[],int *re,int *rn)
 {
     int pd;
     int pn;
-    char path[MAXPATH] = { 0 };
-    char buffer[MAXFILEBUFFER] = { 0 };
+    char path[FILEPATH] = { 0 };
+    char buffer[FILEBUFFER] = { 0 };
     int isTrue = 0;
 
     strcpy(path,AppPath);
@@ -39,7 +69,7 @@ int LoginApi(char id[],char pass[],int *re,int *rn)
 	}
 
 	//按行读取文件
-	while (fgets(buffer, MAXFILEBUFFER, file) != NULL)
+	while (fgets(buffer, FILEBUFFER, file) != NULL)
 	{
 	    int bufferIndex = 0;
 	    //先获取每行的id
@@ -60,8 +90,8 @@ int LoginApi(char id[],char pass[],int *re,int *rn)
         //获取到账号后，说明 输入的账户账户注册过，可以从私钥表里获取到这个账户的私钥
         //获取到文件
         int isGetPriKey = 0;
-        char priKeyPath [MAXPATH] = {0};
-        char pvbuffe[MAXFILEBUFFER]={0};
+        char priKeyPath [FILEPATH] = {0};
+        char pvbuffe[FILEBUFFER]={0};
 
         sprintf(priKeyPath,"%s\\data\\privatekey.txt",AppPath);
         FILE *pvFile = fopen(priKeyPath,"r");
@@ -72,7 +102,7 @@ int LoginApi(char id[],char pass[],int *re,int *rn)
             return 0;
         }
 
-        while (fgets(pvbuffe, MAXFILEBUFFER, pvFile) != NULL)
+        while (fgets(pvbuffe, FILEBUFFER, pvFile) != NULL)
         {
             char pkuid[16]={0};
             int temp = 0;
@@ -137,6 +167,60 @@ int LoginApi(char id[],char pass[],int *re,int *rn)
             break;
 	}
 	return isTrue;
+}
+
+int RegistApi(char nid[], char npass[],int *xe,int *xd,int *xn)
+{
+    char uid[USERIDLENTH] = { 0 };
+    char pass[17] = { 0 };
+
+    //获取到随机密钥
+    int e = 0, d = 0, T = 0;
+    GetKey(&e, &d, &T);
+
+    //把公钥保存到文件中TODO 复制不安全
+    memcpy(uid, nid, 8);
+    //strcpy(uid, nid);
+    char pubKeyPath[FILEPATH] = { 0 };
+    sprintf(pubKeyPath, "%s\\data\\publickey.txt", AppPath);
+
+    FILE* pkFile = fopen(pubKeyPath, "a+");
+    char pkBuffer[1024] = { 0 };
+    sprintf(pkBuffer, "%s;%d;%d;\n", uid, e, T);
+    fputs(pkBuffer, pkFile);
+    fclose(pkFile);
+
+    //把私钥保存到文件中
+
+    char priKeyPath[FILEPATH] = { 0 };
+    sprintf(priKeyPath, "%s\\data\\privatekey.txt", AppPath);
+
+    FILE* pvFile = fopen(priKeyPath, "a+");
+    char pvBuffer[1024] = { 0 };
+    sprintf(pvBuffer, "%s;%d;%d;\n", uid, d, T);
+    fputs(pvBuffer, pvFile);
+    fclose(pvFile);
+
+    memcpy(pass, npass, 16);
+    //strcpy(pass, npass);
+
+    char _buffer[48] = { 0 };
+    sprintf(_buffer, "%s;%s;\n", uid, pass);
+
+    //将账号密码保存起来
+    char userpath[FILEPATH];
+    sprintf(userpath, "%s\\data\\user.txt", AppPath);
+    FILE* file = fopen(userpath, "a+");
+    int result = fputs(_buffer, file);
+    *xe = e;
+    *xd = d;
+    *xn = T;
+    fclose(file);
+
+    if (result == 0)
+        return 1;
+    else
+        return 0;
 }
 
 

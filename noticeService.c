@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include <time.h>
-#include <stdio.h>
+
 #include "md5.h"
+#include "MD5_.h"
 #include "pojo.h"
 #include "rsa.h"
 #include "noticeService.h"
@@ -36,28 +36,18 @@ int SendNoticeApi(char notice[], RsaPriKey privKey)
 	sprintf(sendTime, "%d-%d-%d %d : %d : %d", 1900 + p->tm_year, 1 + p->tm_mon, p->tm_mday, 8 + p->tm_hour, p->tm_min, p->tm_sec);
 
 	//将公告用MD5生成摘要
-	char MD5[16] = { 0 };
+	unsigned char MD5[33] = { 0 };
 	md5(notice, strlen(notice), MD5);
 
-	//将摘要格式化
-	char temp[8] = { 0 };
-	char decrypt32[64] = { 0 };
-	char md5216[NOTICELENTH] = { 0 };
-	for (int i = 0; i < 8; i++)
-	{
-		sprintf(temp, "%0X", MD5[i]);
-		strcat((char*)decrypt32, temp);
-	}
-
-	printf("公告摘要 -> %s", decrypt32);
+	printf("公告摘要 -> %s", MD5);
 
 	//将摘要加密
-	char keyMd5[64];
-	RsaDecipher(decrypt32, strlen(decrypt32), keyMd5, privKey);
+	unsigned char keyMd5[64] = { 0 };
+	RsaDecipher(MD5, strlen(MD5), keyMd5, privKey);
 
 	//组成 buffer 写入文件
 	char addBuffer[FILEBUFFER] = { 0 };
-	sprintf(addBuffer, "%s#%s#%s#\n", logonUser.uid, sendTime, keyMd5);
+	sprintf(addBuffer, "%s#%s#%s#%s#\n", logonUser.uid, sendTime, notice, keyMd5);
 
 	//处理addBuffer 将\换成\\
 
@@ -82,4 +72,50 @@ int SendNoticeApi(char notice[], RsaPriKey privKey)
 		return 0;
 	else
 		return 1;
+}
+
+int GetNoticeListApi(NoticeLink* head)
+{
+	int no = 0;
+	noticeFile = fopen(noticeFilePath, "r");
+	char noticeBuffer[FILEBUFFER] = { 0 };
+	NoticeLink* p = head;
+
+	while (fgets(noticeBuffer, FILEBUFFER,noticeFile) != NULL)
+	{
+		int i = 0;
+		//去除空行
+		if (noticeBuffer[0] == '\0') continue;
+
+		char uid[USERIDLENTH] = { 0 };
+		for (; noticeBuffer[i] != '#'; i++)
+			uid[i] = noticeBuffer[i];
+
+		i++;
+		char sendTime[TIMELENTH] = { 0 };
+		for (int j = 0; noticeBuffer[i] != '#'; i++,j++)
+			sendTime[j] = noticeBuffer[i];
+
+		i++;
+		char notice[NOTICELENTH] = { 0 };
+		for (int j = 0; noticeBuffer[i] != '#'; i++, j++)
+			notice[j] = noticeBuffer[i];
+
+		i++;
+		char keyMd5[NOTICELENTH] = { 0 };
+		for (int j = 0; noticeBuffer[i] != '#'; i++, j++)
+			keyMd5[j] = noticeBuffer[i];
+
+		NoticeLink* node = (NoticeLink*)malloc(sizeof(NoticeLink));
+
+		node->notice.no = ++no;
+		strcpy(node->notice.uid, uid);
+		strcpy(node->notice.publishTiem, sendTime);
+		strcpy(node->notice.notice, notice);
+		strcpy(node->notice.keyMd5, keyMd5);
+
+		p->next = node;
+		p = p->next;
+	}
+	fclose(noticeFile);
 }
