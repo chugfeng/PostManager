@@ -293,37 +293,6 @@ void Regist()
     Sleep(2000);
 }
 
-//获取密钥
-//int GetKey(int* e, int* d, int* T)
-//{
-//    int p, q, n, phi;
-//    srand(time(NULL));
-//    while (1) {
-//        p = randPrime(SINGLE_MAX);
-//
-//        q = randPrime(SINGLE_MAX);
-//
-//        n = p * q;
-//
-//        if (n >= 128)
-//            break;
-//    }
-//
-//    phi = (p - 1) * (+-q - 1);
-//
-//    e = randExponent(phi, EXPONENT_MAX);
-//
-//    d = inverse(e, phi);
-//
-//    T = n;
-//
-//
-//
-//
-//    *e = 173; *d = 4037; *T = 13971;
-//    return 1;
-//}
-
 //发送私信
 void SendMail()
 {
