@@ -96,6 +96,7 @@ int SendMailApi(char reciver[], char msg[], RsaPubKey pubKey)
 {
 
 	int ques = 0;
+	printf("\n");
 	printf("是否确认发送？(1:发送 || 0:不发送)\n->:");
 
 	while (1)

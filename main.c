@@ -181,6 +181,7 @@ int Login()
         if (!strcmp(uidBuffer, "esc")) return;
 
         char passBuffer[128] = {0};
+        printf("\n");
         printf("请输入你的密码(输入esc退出)：");
         scanf("%s",passBuffer);
 
@@ -205,6 +206,7 @@ int Login()
                 break;
             }
             ret = 1;
+            printf("\n");
             printf("登录成功!  \t两秒后自动进入系统\n");
             Sleep(2000);
             break;
