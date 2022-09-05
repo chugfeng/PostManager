@@ -7,6 +7,7 @@
 #include "loginService.h"
 #include "userService.h"
 #include "utils.h"
+#include "MD5_.h"
 
 
 RsaPriKey pkey;
@@ -56,6 +57,9 @@ int LoginApi(char id[],char pass[],int *re,int *rn)
     char path[FILEPATH] = { 0 };
     char buffer[FILEBUFFER] = { 0 };
     int isTrue = 0;
+
+    char passMd5[33] = { 0 };
+    md5(pass, strlen(pass), passMd5);
 
     strcpy(path,AppPath);
     strcat(path,"\\data\\user.txt");
@@ -152,14 +156,14 @@ int LoginApi(char id[],char pass[],int *re,int *rn)
         }
 
         //账号相等了获取密码
-        char pwd[16] = {0};;
+        char pwd[33] = {0};;
         for(int i = bufferIndex ,j = 0; buffer[i] != ';';i++,j++)
             pwd[j] = buffer[i];
 
         //将获取到的密码解密，正常流程因该是将输入的数据进行加密，这里做测试
 
         //判断密码是否相等
-        if(! strcmp(pwd,pass))
+        if(! strcmp(pwd, passMd5))
         {
             isTrue = 1;
             break;
@@ -204,7 +208,9 @@ int RegistApi(char nid[], char npass[],int *xe,int *xd,int *xn)
     //strcpy(pass, npass);
 
     char _buffer[48] = { 0 };
-    sprintf(_buffer, "%s;%s;\n", uid, pass);
+    char passMd5[33] = { 0 };
+    md5(pass, strlen(pass), passMd5);
+    sprintf(_buffer, "%s;%s;\n", uid, passMd5);
 
     //将账号密码保存起来
     char userpath[FILEPATH];
